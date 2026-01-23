@@ -236,4 +236,21 @@ public class AppointmentService {
                 .findByIdAndProvider(appointmentId, provider)
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
     }
+
+
+    public Appointment sendAppointmentReminder(String to, Appointment appointment){
+        if(appointment.isReminderSent()){
+            return appointment;
+        }
+        if(appointment.getStatus() != AppointmentStatus.CONFIRMED){
+            throw new IllegalStateException("Remainder Is For Confirmed User");
+        }
+        emailService.sendEmail(
+                to,
+                "Appointment Remainder",
+                EmailTemplates.sendReminder(appointment)
+        );
+        appointment.setReminderSent(true);
+        return appointmentRepository.save(appointment);
+    }
 }

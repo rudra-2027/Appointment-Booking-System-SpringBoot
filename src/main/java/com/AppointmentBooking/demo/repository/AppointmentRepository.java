@@ -38,6 +38,12 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
             @Param("statuses") List<AppointmentStatus> statuses
     );
 
-
+    @Query("""
+            SELECT a FROM Appointment a
+            WHERE a.status= :appointmentStatus
+            AND a.startTime Between :from AND :to
+            AND a.reminderSent = false
+            """)
+     List<Appointment> findAppointmentsForReminder(AppointmentStatus appointmentStatus, LocalDateTime from, LocalDateTime to);
 
 }

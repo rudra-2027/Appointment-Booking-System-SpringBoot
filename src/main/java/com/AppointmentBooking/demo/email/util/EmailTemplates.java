@@ -131,5 +131,29 @@ public class EmailTemplates {
                 appt.getStartTime()
         );
     }
+    public static String sendReminder(Appointment appointment){
+        return """
+        Hello %s,
+
+        This is a reminder for your upcoming appointment.
+
+        Provider: %s
+        Date & Time: %s
+        Duration: %d minutes
+
+        Please be on time.
+
+        Regards,
+        Appointment Booking Team
+        """.formatted(
+                appointment.getUser().getName(),
+                appointment.getProvider().getName(),
+                appointment.getStartTime(),
+                java.time.Duration.between(
+                        appointment.getStartTime(),
+                        appointment.getEndTime()
+                ).toMinutes()
+        );
+    }
 
 }
