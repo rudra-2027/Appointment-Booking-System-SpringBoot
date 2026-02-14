@@ -6,6 +6,8 @@ import com.AppointmentBooking.demo.email.util.EmailTemplates;
 import com.AppointmentBooking.demo.entity.Appointment;
 import com.AppointmentBooking.demo.entity.User;
 import com.AppointmentBooking.demo.entity.enumClasses.AppointmentStatus;
+import com.AppointmentBooking.demo.notification.service.PushNotificationService;
+import com.AppointmentBooking.demo.notification.service.PushNotificationServiceImpl;
 import com.AppointmentBooking.demo.repository.AppointmentRepository;
 import com.AppointmentBooking.demo.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -24,6 +26,7 @@ public class AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final UserRepository userRepository;
     private final EmailService emailService;
+    private final PushNotificationServiceImpl pushNotificationService;
 
     private static final int MAX_DURATION_MINUTES = 480; // 8 hours
 
@@ -111,6 +114,12 @@ public class AppointmentService {
                 "Appointment Booked",
                 EmailTemplates.bookedToUser(saved)
         );
+        pushNotificationService.sendPush(
+                saved.getUser().getFcmToken(),
+                "Appointment Booked",
+                "Your appointment with " + saved.getProvider().getName()
+                        + " is Booked at " + saved.getStartTime()
+        );
 
         return saved;
     }
@@ -134,6 +143,12 @@ public class AppointmentService {
                 "Appointment Confirmed",
                 EmailTemplates.confirmedToUser(saved)
         );
+        pushNotificationService.sendPush(
+                saved.getUser().getFcmToken(),
+                "Appointment Confirmed",
+                "Your appointment with " + saved.getProvider().getName()
+                        + " is confirmed at " + saved.getStartTime()
+        );
 
         return saved;
     }
@@ -156,6 +171,13 @@ public class AppointmentService {
                 saved.getUser().getEmail(),
                 "Appointment Rejected",
                 EmailTemplates.rejectedToUser(saved)
+        );
+
+        pushNotificationService.sendPush(
+                saved.getUser().getFcmToken(),
+                "Appointment Rejected",
+                "Your appointment with " + saved.getProvider().getName()
+                        + " is rejected at " + saved.getStartTime()
         );
 
         return saved;
@@ -193,7 +215,12 @@ public class AppointmentService {
                 "Appointment Cancelled",
                 EmailTemplates.cancelled(saved, false)
         );
-
+        pushNotificationService.sendPush(
+                saved.getUser().getFcmToken(),
+                "Appointment Cancelled ",
+                "Your appointment with " + saved.getProvider().getName()
+                        + " is cancelled at " + saved.getStartTime()
+        );
         return saved;
     }
 
@@ -221,7 +248,12 @@ public class AppointmentService {
                 "Appointment Completed",
                 EmailTemplates.completedToUser(saved)
         );
-
+        pushNotificationService.sendPush(
+                saved.getUser().getFcmToken(),
+                "Appointment Completed",
+                "Your appointment with " + saved.getProvider().getName()
+                        + " is completed at " + saved.getStartTime()
+        );
         return saved;
     }
 
@@ -250,6 +282,13 @@ public class AppointmentService {
                 "Appointment Remainder",
                 EmailTemplates.sendReminder(appointment)
         );
+        pushNotificationService.sendPush(
+                appointment.getUser().getFcmToken(),
+                "⏰ Appointment Reminder",
+                "Your appointment starts at " + appointment.getStartTime()
+        );
+
+
         appointment.setReminderSent(true);
         return appointmentRepository.save(appointment);
     }

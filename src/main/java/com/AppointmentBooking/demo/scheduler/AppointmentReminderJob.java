@@ -23,7 +23,6 @@ public class AppointmentReminderJob {
     public void sendAppointmentReminders() {
         LocalDateTime now = LocalDateTime.now();
         System.out.println(" Reminder job running at " + now);
-        //range is starting-5 and now-30
         List<Appointment> appointments =
                 appointmentRepository.findAppointmentsForReminder(
                         AppointmentStatus.CONFIRMED,

@@ -33,4 +33,7 @@ public class User {
     private Role role;
 
     private boolean enabled = true;
+
+    @Column(length = 512)
+    private String fcmToken;
 }
