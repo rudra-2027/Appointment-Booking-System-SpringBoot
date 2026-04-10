@@ -58,7 +58,7 @@ public class AppointmentService {
 
 
         int duration = request.getDurationMinutes();
-        if (duration <= 0 || duration > 480) { // max 8 hours
+        if (duration <= 0 || duration > 480) {
             throw new IllegalArgumentException("Invalid appointment duration");
         }
 
@@ -137,7 +137,6 @@ public class AppointmentService {
         appt.setStatus(AppointmentStatus.CONFIRMED);
         Appointment saved = appointmentRepository.save(appt);
 
-        //  Email → User
         emailService.sendEmail(
                 saved.getUser().getEmail(),
                 "Appointment Confirmed",
@@ -166,7 +165,7 @@ public class AppointmentService {
         appt.setStatus(AppointmentStatus.REJECTED);
         Appointment saved = appointmentRepository.save(appt);
 
-        //  Email → User
+       
         emailService.sendEmail(
                 saved.getUser().getEmail(),
                 "Appointment Rejected",
@@ -202,14 +201,13 @@ public class AppointmentService {
         appointment.setStatus(AppointmentStatus.CANCELLED);
         Appointment saved = appointmentRepository.save(appointment);
 
-        //  Email → Provider
+      
         emailService.sendEmail(
                 saved.getProvider().getEmail(),
                 "Appointment Cancelled",
                 EmailTemplates.cancelled(saved, true)
         );
 
-        // Email → User
         emailService.sendEmail(
                 saved.getUser().getEmail(),
                 "Appointment Cancelled",
@@ -242,7 +240,6 @@ public class AppointmentService {
         appt.setStatus(AppointmentStatus.COMPLETED);
         Appointment saved = appointmentRepository.save(appt);
 
-        //  Email → User
         emailService.sendEmail(
                 saved.getUser().getEmail(),
                 "Appointment Completed",
@@ -257,8 +254,7 @@ public class AppointmentService {
         return saved;
     }
 
-    /* ---------------- HELPER ---------------- */
-
+  
     private Appointment getProviderAppointment(UUID appointmentId, String providerEmail) {
 
         User provider = userRepository.findByEmail(providerEmail)
@@ -284,7 +280,7 @@ public class AppointmentService {
         );
         pushNotificationService.sendPush(
                 appointment.getUser().getFcmToken(),
-                "⏰ Appointment Reminder",
+                "Appointment Reminder",
                 "Your appointment starts at " + appointment.getStartTime()
         );
 
