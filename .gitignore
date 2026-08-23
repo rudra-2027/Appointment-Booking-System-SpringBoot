@@ -33,6 +33,12 @@ build/
 .vscode/
 
 firebase-service-account.json
+client/node_modules
+client/dist
+client/.env
+.env
+.env.example
+!client/.env.example
 
 client/node_modules/
 client/dist/
